@@ -1,5 +1,8 @@
 <template>
-    <Banner />
+    <div>
+        <!-- content goes here -->
+        <slot />
+    </div>
 </template>
 
 <script setup>
