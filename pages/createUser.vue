@@ -41,37 +41,75 @@
           Add User
         </button>
       </form>
+      <div class="mt-6">
+        <h2 class="text-lg font-semibold text-gray-700">User List</h2>
+        <ul class="space-y-2">
+          <li v-for="user in users" :key="user.id" class="flex justify-between items-center border-b py-2">
+            <span class="text-gray-800">{{ user.name }} ({{ user.role }})</span>
+            <button @click="removeUser(user.id)" class="text-red-500 hover:text-red-700">Delete</button>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { showToast } from '@/composables/toast';
 
 const username = ref('');
 const role = ref('');
+const users = ref([]);
 
+// Function to retrieve users from local storage
+const getUsers = () => {
+  const usersData = localStorage.getItem('users');
+  return usersData ? JSON.parse(usersData) : [];
+};
+
+// Function to save users to local storage
+const saveUsers = (users) => {
+  localStorage.setItem('users', JSON.stringify(users));
+};
+
+// Function to add a user
 const addUser = () => {
-  if (!username.value && !role.value) {
+  if (!username.value || !role.value) {
     showToast('error', 'Username and role are required');
     return;
   }
+  
+  const newUser = {
+    id: Date.now(), // Generate a unique ID
+    name: username.value,
+    role: role.value,
+  };
 
-  if (!username.value) {
-    showToast('error', 'Username is required');
-    return;
-  }
-  if (!role.value) {
-    showToast('error', 'Please select a role type');
-    return;
-  }
+  const currentUsers = getUsers();
+  currentUsers.push(newUser); // Add new user to the list
+  saveUsers(currentUsers); // Save updated list to local storage
+  users.value = currentUsers; // Update the reactive users array
 
   showToast('success', 'User Added');
 
+  // Reset input fields
   username.value = '';
   role.value = '';
 };
+
+// Function to remove a user
+const removeUser = (id) => {
+  const currentUsers = getUsers();
+  const updatedUsers = currentUsers.filter(user => user.id !== id);
+  saveUsers(updatedUsers); // Save updated list to local storage
+  users.value = updatedUsers; // Update the reactive users array
+};
+
+// Load users from local storage on component mount
+onMounted(() => {
+  users.value = getUsers();
+});
 </script>
 
 <style scoped>
