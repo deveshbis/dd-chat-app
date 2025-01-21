@@ -1,5 +1,5 @@
 <template>
-<div>
+  <div>
     <nav class="bg-gray-800 p-4">
       <div class="container mx-auto flex justify-between items-center">
         <div class="flex items-center">
@@ -15,12 +15,11 @@
       </div>
     </nav>
     <slot />
-</div>
-  </template>
-  
-  <script>
+  </div>
+</template>
 
-  </script>
-  
-  <style scoped>
-  </style>
+<script setup>
+
+</script>
+
+<style lang="scss" scoped></style>
