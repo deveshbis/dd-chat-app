@@ -24,10 +24,16 @@
 <script setup>
 import { ref } from 'vue';
 import DropdownUser from '../DropdownUser/DropDownUser.vue';
+import { showToast } from '@/composables/toast';
 
 const message = ref('');
 
 const handleSubmit = () => {
+    if (message.value.trim() === '') {
+        showToast('Message cannot be empty', 'error'); 
+        return;
+    }
+
     const messageData = {
         id: Date.now(), 
         text: message.value,
@@ -37,6 +43,8 @@ const handleSubmit = () => {
     messages.push(messageData);
     localStorage.setItem('messages', JSON.stringify(messages));
     message.value = '';
+
+    showToast('Message added successfully!', 'Message Send successfully!'); 
 };
 </script>
 
