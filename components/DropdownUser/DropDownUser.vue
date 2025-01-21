@@ -11,7 +11,7 @@
                     class="w-7 h-7 mr-3 rounded-full shrink-0"
                     alt="Profile"
                 />
-                John Doe
+                {{ selectedRole }}
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="w-3 fill-gray-400 inline ml-3"
@@ -31,6 +31,9 @@
                 class="absolute shadow-lg bg-white py-2 z-[1000] min-w-full w-max rounded-lg max-h-96 overflow-auto"
             >
                 <li
+                    v-for="role in roles"
+                    :key="role"
+                    @click="selectRole(role)"
                     class="py-2.5 px-5 flex items-center hover:bg-gray-100 text-[#333] text-sm cursor-pointer"
                 >
                     <svg
@@ -44,7 +47,7 @@
                             data-original="#000000"
                         />
                     </svg>
-                    View profile
+                    {{ role }}
                 </li>
             </ul>
         </div>
@@ -55,9 +58,16 @@
 import { ref } from "vue";
 
 const isDropdownVisible = ref(false);
+const roles = ["User", "Admin"];
+const selectedRole = ref("User"); 
 
 const toggleDropdown = () => {
     isDropdownVisible.value = !isDropdownVisible.value;
+};
+
+const selectRole = (role) => {
+    selectedRole.value = role;
+    isDropdownVisible.value = false;
 };
 </script>
 
