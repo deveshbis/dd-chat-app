@@ -15,20 +15,3 @@ export const showToast = (icon, title) => {
         title: title,
     });
 };
-
-export const showPromoAlert = (title, text, icon) => {
-    Swal.fire({
-        title: title,
-        text: text,
-        icon: icon,
-        confirmButtonText: 'Okay',
-        customClass: {
-            title: 'font-bold text-lg',
-            text: 'text-base',
-            confirmButton: 'bg-blue-500 text-white fongt-semibold rounded-lg',
-        },
-        backdrop: true,
-        allowOutsideClick: false,
-        timer: 1000,
-    })
-}
