@@ -1,4 +1,5 @@
 <template>
+<div>
     <nav class="bg-gray-800 p-4">
       <div class="container mx-auto flex justify-between items-center">
         <div class="flex items-center">
@@ -7,12 +8,14 @@
         </div>
 
         <div class="space-x-4">
-          <nuxt-link to="/" class="text-white hover:underline">Home</nuxt-link>
-          <nuxt-link to="/create-user" class="text-white hover:underline">Create User</nuxt-link>
-          <nuxt-link to="/chat" class="text-white hover:underline">Chat</nuxt-link>
+          <NuxtLink to="/" class="text-white hover:underline">Home</NuxtLink>
+          <NuxtLink to="/createUser" class="text-white hover:underline">Create User</NuxtLink>
+          <NuxtLink to="/chat" class="text-white hover:underline">Chat</NuxtLink>
         </div>
       </div>
     </nav>
+    <slot />
+</div>
   </template>
   
   <script>
