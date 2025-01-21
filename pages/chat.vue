@@ -3,11 +3,6 @@
         <div class="flex justify-between items-end ">
             <div>
                 <UserChatList />
-                <UserChatList />
-                <UserChatList />
-                <UserChatList />
-                <UserChatList />
-                <UserChatList />
             </div>
             <div>
                 <MyChat />
