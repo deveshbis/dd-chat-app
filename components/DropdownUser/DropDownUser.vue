@@ -69,6 +69,13 @@ const selectRole = (role) => {
     selectedRole.value = role;
     isDropdownVisible.value = false;
 };
+
+
+const getUsers = () => {
+  const usersData = localStorage.getItem('users');
+  return usersData ? JSON.parse(usersData) : [];
+};
+
 </script>
 
 <style lang="scss" scoped>
