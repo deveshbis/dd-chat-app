@@ -1,6 +1,6 @@
 <template>
-    <div class="p-4">
-        <div class="max-h-[500px] overflow-y-auto mb-4">
+    <div class="flex flex-col h-full">
+        <div ref="messagesContainer" class="flex-grow max-h-[500px] overflow-y-auto mb-4">
             <div v-for="message in messages" :key="message.id"
                 :class="message.user.role === 'admin' ? 'justify-end' : 'justify-start'"
                 class="flex items-start gap-2.5 mb-2 border border-s-violet-300 p-3 rounded-2xl border-gray-200">
@@ -19,29 +19,28 @@
             </div>
         </div>
 
-        <form @submit.prevent="handleSubmit">
-            <label for="chat" class="sr-only">Your message</label>
-            <div class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
-                <button type="button" @click="openModal"
-                    class="px-4 py-2 flex items-center rounded-full text-[#333] text-sm border border-gray-300 outline-none hover:bg-gray-100">
-                    <img src="https://readymadeui.com/profile_6.webp" class="w-7 h-7 mr-3 rounded-full shrink-0" alt="Profile" />
-                    {{ selectedRole.name }}
-                </button>
+        <form @submit.prevent="handleSubmit" class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
+            <button type="button" @click="openModal"
+                class="px-4 py-2 flex items-center rounded-full text-[#333] text-sm border border-gray-300 outline-none hover:bg-gray-100">
+                <img src="https://readymadeui.com/profile_6.webp" class="w-7 h-7 mr-3 rounded-full shrink-0" alt="Profile" />
+                {{ selectedRole.name }}
+            </button>
 
-                <textarea id="chat" rows="1" v-model="message"
-                    class="flex-grow block p-2.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Your message..."></textarea>
+            <textarea id="chat" rows="2" v-model="message"
+                @keydown.enter.prevent="handleSubmit"
+                class="flex-grow block p-2.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Your message..."></textarea>
 
-                <button type="submit"
-                    class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
-                    <svg class="w-5 h-5 rotate-90 rtl:-rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor" viewBox="0 0 18 20">
-                        <path d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
-                    </svg>
-                    <span class="sr-only">Send message</span>
-                </button>
-            </div>
+            <button type="submit"
+                class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                <svg class="w-5 h-5 rotate-90 rtl:-rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor" viewBox="0 0 18 20">
+                    <path d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
+                </svg>
+                <span class="sr-only">Send message</span>
+            </button>
         </form>
+
         <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div class="bg-white rounded-lg shadow-lg p-6 w-80">
                 <h2 class="text-lg font-semibold mb-4">Select a User</h2>
@@ -51,14 +50,16 @@
                         {{ user.name }}
                     </li>
                 </ul>
-                <button @click="closeModal" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">Close</button>
+                <div class="flex justify-center mt-4">
+                    <button @click="closeModal" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Close</button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { showToast } from '@/composables/toast';
 
 const isModalOpen = ref(false);
@@ -66,11 +67,14 @@ const selectedRole = ref({ name: "Select a User", role: null });
 const users = ref([]);
 const messages = ref([]);
 const message = ref('');
+const messagesContainer = ref(null);
 
 onMounted(() => {
     if (typeof window !== 'undefined') {
         users.value = JSON.parse(localStorage.getItem('users')) || [];
         messages.value = JSON.parse(localStorage.getItem('messages')) || [];
+        
+        nextTick(() => scrollToBottom());
     }
 });
 
@@ -115,6 +119,14 @@ const handleSubmit = () => {
     }
 
     message.value = '';
+    
+    nextTick(() => scrollToBottom());
+};
+
+const scrollToBottom = () => {
+    if (messagesContainer.value) {
+        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+    }
 };
 </script>
 
