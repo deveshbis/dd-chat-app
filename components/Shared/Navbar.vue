@@ -8,8 +8,7 @@
             </NuxtLink>
             <span class="text-white text-xl font-semibold">DD Chat App</span>
           </div>
-  
-          <!-- Desktop Menu -->
+          
           <div class="hidden md:flex space-x-4 items-center">
             <div v-for="item in navItems" :key="item.name">
               <NuxtLink :to="item.link" class="nbtn">
@@ -18,14 +17,12 @@
             </div>
             <NuxtLink class="cbtn" to="/chat">Chat</NuxtLink>
           </div>
-  
-          <!-- Menu for Mobile -->
+
           <button @click="toggleMenu" class="md:hidden text-white focus:outline-none">
             Menu
           </button>
         </div>
-  
-        <!-- Mobile Menu -->
+
         <div v-if="isMenuOpen" class="md:hidden bg-gray-700">
           <div v-for="item in navItems" :key="item.name">
             <NuxtLink :to="item.link" class="block text-white hover:text-gray-300 p-4" @click="closeMenu">
@@ -59,7 +56,7 @@
     isMenuOpen.value = false;
   };
   
-  // Watch for route changes to close the menu
+  // close the menu after page change
   router.afterEach(() => {
     closeMenu();
   });
