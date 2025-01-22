@@ -3,10 +3,10 @@
       <nav class="bg-gray-800 p-4">
         <div class="container mx-auto flex justify-between items-center">
           <div class="flex items-center">
-            <NuxtLink to="/">
+            <NuxtLink to="/" class="flex justify-between items-center">
               <img src="/assets/logo.png" alt="Logo" class="h-8 mr-2">
+              <span class="text-white text-xl font-semibold">DD Chat App</span>
             </NuxtLink>
-            <span class="text-white text-xl font-semibold">DD Chat App</span>
           </div>
           
           <div class="hidden md:flex space-x-4 items-center">
