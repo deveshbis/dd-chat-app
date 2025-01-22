@@ -36,8 +36,7 @@
         </div>
         <button
           type="submit"
-          class="w-full px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200"
-        >
+          class="w-full px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200">
           Add User
         </button>
       </form>
@@ -62,51 +61,58 @@ const username = ref('');
 const role = ref('');
 const users = ref([]);
 
-// Function to retrieve users from local storage
+// Show users from local storage
 const getUsers = () => {
   const usersData = localStorage.getItem('users');
   return usersData ? JSON.parse(usersData) : [];
 };
 
-// Function to save users to local storage
+// Save users to local storage
 const saveUsers = (users) => {
   localStorage.setItem('users', JSON.stringify(users));
 };
 
-// Function to add a user
+// Add a user 
 const addUser = () => {
   if (!username.value || !role.value) {
     showToast('error', 'Username and role are required');
     return;
   }
-  
+
+  // Checkinhg for duplicate admin
+  const currentUsers = getUsers();
+  const adminExists = currentUsers.some(user => user.role === 'admin');
+
+  if (role.value === 'admin' && adminExists) {
+    showToast('error', 'Admin already exists');
+    return;
+  }
+
   const newUser = {
-    id: Date.now(), // Generate a unique ID
+    id: Date.now(), // unique ID (according to date & time)
     name: username.value,
     role: role.value,
   };
 
-  const currentUsers = getUsers();
-  currentUsers.push(newUser); // Add new user to the list
-  saveUsers(currentUsers); // Save updated list to local storage
-  users.value = currentUsers; // Update the reactive users array
+  currentUsers.push(newUser); 
+  saveUsers(currentUsers);
+  users.value = currentUsers; 
 
   showToast('success', 'User Added');
 
-  // Reset input fields
   username.value = '';
   role.value = '';
 };
 
-// Function to remove a user
+// Remove a user
 const removeUser = (id) => {
   const currentUsers = getUsers();
   const updatedUsers = currentUsers.filter(user => user.id !== id);
-  saveUsers(updatedUsers); // Save updated list to local storage
-  users.value = updatedUsers; // Update the reactive users array
+  saveUsers(updatedUsers); 
+  users.value = updatedUsers;
 };
 
-// Load users from local storage on component mount
+// Load users from local storage
 onMounted(() => {
   users.value = getUsers();
 });
