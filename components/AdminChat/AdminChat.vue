@@ -1,5 +1,6 @@
 <template>
     <div class="flex items-start gap-2.5">
+        <hr>
         <div class="flex flex-col w-full max-w-[320px] leading-1.5">
             <div class="flex items-center space-x-2 rtl:space-x-reverse">
                 <span class="text-sm font-semibold text-gray-900 dark:text-white">Bonnie Green</span>
