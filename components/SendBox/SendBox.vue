@@ -3,7 +3,7 @@
         <div class="max-h-[500px] overflow-y-auto mb-4">
             <div v-for="message in messages" :key="message.id"
                 :class="message.user.role === 'admin' ? 'justify-end' : 'justify-start'"
-                class="flex items-start gap-2.5 mb-2">
+                class="flex items-start gap-2.5 mb-2 border border-s-violet-300 p-3 rounded-2xl border-gray-200 ">
                 <div class="flex gap-4">
                     <div
                         class="w-12 h-9 rounded-full bg-gray-500 flex items-center justify-center text-white font-semibold">

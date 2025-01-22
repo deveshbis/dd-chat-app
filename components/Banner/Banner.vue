@@ -1,6 +1,6 @@
 <template>
     <div class="font-sans">
-        <div class="grid lg:grid-cols-2 items-center lg:gap-y-6 bg-blue-500">
+        <div class="grid lg:grid-cols-2 items-center lg:gap-y-6 bg-blue-500 min-h-screen">
             <div class="max-lg:order-1 max-lg:text-center sm:p-12 p-4">
                 <h2 class="text-gray-800 lg:text-5xl text-3xl font-bold lg:!leading-[56px]">Connect Instantly, Chat
                     Seamlessly</h2>
