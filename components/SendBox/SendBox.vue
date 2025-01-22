@@ -93,13 +93,19 @@ const selectRole = (user) => {
 };
 
 const handleSubmit = () => {
+
+    if (!selectedRole.value.role || !message.value) {
+        showToast('error', 'Select a Role and Type a Message')
+        return;
+    }
+
     if (!selectedRole.value.role) {
-        showToast('Please select a user', 'error');
+        showToast('error', 'Please select a role');
         return;
     }
 
     if (message.value.trim() === '') {
-        showToast('Message cannot be empty', 'error');
+        showToast('error', `Message can't be empty`);
         return;
     }
 
@@ -113,7 +119,5 @@ const handleSubmit = () => {
     if (typeof window !== 'undefined') {
         localStorage.setItem('messages', JSON.stringify(messages.value));
     }
-    message.value = '';
-    showToast('Message sent successfully!', 'success');
 };
 </script>
