@@ -1,6 +1,6 @@
 <template>
     <div class="p-4">
-        <div class="max-h-[500px] overflow-y-auto mb-4 *:">
+        <div class="max-h-[500px] overflow-y-auto mb-4">
             <div v-for="message in messages" :key="message.id"
                 :class="message.user.role === 'admin' ? 'justify-end' : 'justify-start'"
                 class="flex items-start gap-2.5 mb-2">
@@ -24,8 +24,8 @@
 
         <form @submit.prevent="handleSubmit">
             <label for="chat" class="sr-only">Your message</label>
-            <div class="flex items-center px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
-                <div class="relative font-[sans-serif] w-max mx-auto">
+            <div class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
+                <div class="relative flex-grow">
                     <button type="button" @click="toggleDropdown"
                         class="px-4 py-2 flex items-center rounded-full text-[#333] text-sm border border-gray-300 outline-none hover:bg-gray-100">
                         <img src="https://readymadeui.com/profile_6.webp" class="w-7 h-7 mr-3 rounded-full shrink-0"
@@ -54,7 +54,7 @@
                 </div>
 
                 <textarea id="chat" rows="1" v-model="message"
-                    class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="flex-grow block p-2.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Your message..."></textarea>
 
                 <button type="submit"
@@ -70,7 +70,6 @@
         </form>
     </div>
 </template>
-
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -99,13 +98,19 @@ const selectRole = (user) => {
 };
 
 const handleSubmit = () => {
+
+    if (!selectedRole.value.role && message.value.trim() === '') {
+        showToast('error', 'Select a Role and Type a Message');
+        return;
+    }
+
     if (!selectedRole.value.role) {
-        showToast('Please select a user', 'error');
+        showToast('error', 'Please select a role');
         return;
     }
 
     if (message.value.trim() === '') {
-        showToast('Message cannot be empty', 'error');
+        showToast('error', `Message can't be empty`);
         return;
     }
 
@@ -119,7 +124,9 @@ const handleSubmit = () => {
     if (typeof window !== 'undefined') {
         localStorage.setItem('messages', JSON.stringify(messages.value));
     }
+
     message.value = '';
-    showToast('Message sent successfully!', 'success');
 };
 </script>
+
+<style scoped></style>
