@@ -1,22 +1,25 @@
 <template>
-    <div>
-        <div v-for="message in messages" :key="message.id"
-            :class="message.user.role === 'admin' ? 'justify-end' : 'justify-start'"
-            class="flex items-start gap-2.5 mb-2">
-            <div class="flex gap-4">
-                <img class="w-8 h-8 rounded-full"
-                    src="https://i.ibb.co/SQ6939Q/portrait-handsome-smiling-stylish-young-man-model-wearing-jeans-clothes-sunglasses-fashion-man-1.png"
-                    alt="User Image" />
-                <div class="flex flex-col w-full max-w-[320px] leading-1.5">
-                    <div class="flex items-center space-x-2 rtl:space-x-reverse">
-                        <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ message.user.name }}</span>
-                        <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ new
-                            Date(message.id).toLocaleTimeString() }}</span>
+    <div class="p-4">
+        <div class="max-h-[500px] overflow-y-auto mb-4 *:">
+            <div v-for="message in messages" :key="message.id"
+                :class="message.user.role === 'admin' ? 'justify-end' : 'justify-start'"
+                class="flex items-start gap-2.5 mb-2">
+                <div class="flex gap-4">
+                    <img class="w-8 h-8 rounded-full"
+                        src="https://i.ibb.co/SQ6939Q/portrait-handsome-smiling-stylish-young-man-model-wearing-jeans-clothes-sunglasses-fashion-man-1.png"
+                        alt="User Image" />
+                    <div class="flex flex-col w-full max-w-[320px] leading-1.5">
+                        <div class="flex items-center space-x-2 rtl:space-x-reverse">
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ message.user.name }}</span>
+                            <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ new
+                                Date(message.id).toLocaleTimeString() }}</span>
+                        </div>
+                        <p class="text-sm font-normal py-2 text-gray-900 dark:text-white">{{ message.text }}</p>
                     </div>
-                    <p class="text-sm font-normal py-2 text-gray-900 dark:text-white">{{ message.text }}</p>
                 </div>
             </div>
         </div>
+
         <form @submit.prevent="handleSubmit">
             <label for="chat" class="sr-only">Your message</label>
             <div class="flex items-center px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
@@ -65,6 +68,7 @@
         </form>
     </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue';
