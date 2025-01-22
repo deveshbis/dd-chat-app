@@ -5,12 +5,14 @@
                 :class="message.user.role === 'admin' ? 'justify-end' : 'justify-start'"
                 class="flex items-start gap-2.5 mb-2">
                 <div class="flex gap-4">
-                    <img class="w-8 h-8 rounded-full"
-                        src="https://i.ibb.co/SQ6939Q/portrait-handsome-smiling-stylish-young-man-model-wearing-jeans-clothes-sunglasses-fashion-man-1.png"
-                        alt="User Image" />
+                    <div 
+                        class="w-12 h-9 rounded-full bg-gray-500 flex items-center justify-center text-white font-semibold">
+                        {{ message.user.name.split('').slice(0, 2).join('').toUpperCase() }}
+                    </div>
                     <div class="flex flex-col w-full max-w-[320px] leading-1.5">
                         <div class="flex items-center space-x-2 rtl:space-x-reverse">
-                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ message.user.name }}</span>
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ message.user.name
+                                }}</span>
                             <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ new
                                 Date(message.id).toLocaleTimeString() }}</span>
                         </div>
@@ -18,6 +20,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <form @submit.prevent="handleSubmit">
@@ -120,4 +123,6 @@ const handleSubmit = () => {
     message.value = '';
     showToast('Message sent successfully!', 'success');
 };
+
+
 </script>
