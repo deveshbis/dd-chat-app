@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <!-- <div>
       <div v-for="message in messages" :key="message.id" class="flex items-start gap-2.5 mb-2">
           <img
               class="w-8 h-8 rounded-full"
@@ -14,7 +14,7 @@
               <p class="text-sm font-normal py-2 text-gray-900 dark:text-white">{{ message.text }}</p>
           </div>
       </div>
-  </div>
+  </div> -->
 </template>
 
 <script setup>
@@ -27,6 +27,8 @@ onMounted(() => {
       messages.value = storedMessages;
   }
 });
+
+// const users = JSON.parse(localStorage.getItem('users')) || [];
 
 
 </script>

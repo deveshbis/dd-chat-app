@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="relative font-[sans-serif] w-max mx-auto">
+        <!-- <div class="relative font-[sans-serif] w-max mx-auto">
             <button
                 type="button"
                 @click="toggleDropdown"
@@ -31,9 +31,9 @@
                 class="absolute shadow-lg bg-white py-2 z-[1000] min-w-full w-max rounded-lg max-h-96 overflow-auto"
             >
                 <li
-                    v-for="role in roles"
-                    :key="role"
-                    @click="selectRole(role)"
+                    v-for="user in users"
+                    :key="user.id"
+                    @click="selectRole(user.name)"
                     class="py-2.5 px-5 flex items-center hover:bg-gray-100 text-[#333] text-sm cursor-pointer"
                 >
                     <svg
@@ -47,10 +47,10 @@
                             data-original="#000000"
                         />
                     </svg>
-                    {{ role }}
+                    {{ user.name }}
                 </li>
             </ul>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -58,24 +58,18 @@
 import { ref } from "vue";
 
 const isDropdownVisible = ref(false);
-const roles = ["User", "Admin"];
-const selectedRole = ref("User"); 
+
+const users = JSON.parse(localStorage.getItem('users')) || [];
+
+const selectedRole = ref("Select a User");
 
 const toggleDropdown = () => {
     isDropdownVisible.value = !isDropdownVisible.value;
 };
-
 const selectRole = (role) => {
     selectedRole.value = role;
     isDropdownVisible.value = false;
 };
-
-
-const getUsers = () => {
-  const usersData = localStorage.getItem('users');
-  return usersData ? JSON.parse(usersData) : [];
-};
-
 </script>
 
 <style lang="scss" scoped>
