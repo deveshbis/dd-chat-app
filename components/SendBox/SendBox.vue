@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col h-full">
         <div ref="messagesContainer" class="flex-grow max-h-[500px] overflow-y-auto mb-4">
-            <div v-for="message in messages" :key="message.id"
+            <div v-for="message in messageStore.messages" :key="message.id"
                 :class="message.user.role === 'admin' ? 'justify-end' : 'justify-start'"
                 class="flex items-start gap-2.5 mb-2 border border-s-violet-300 p-3 rounded-2xl border-gray-200">
                 <div class="flex gap-4">
@@ -23,7 +23,7 @@
             <button type="button" @click="openModal"
                 class="px-4 py-2 flex items-center rounded-full text-[#333] text-sm border border-gray-300 outline-none hover:bg-gray-100">
                 <img src="https://readymadeui.com/profile_6.webp" class="w-7 h-7 mr-3 rounded-full shrink-0" alt="Profile" />
-                {{ selectedRole.name }}
+                {{ userStore.selectedRole.name }}
             </button>
 
             <textarea id="chat" rows="2" v-model="message"
@@ -45,7 +45,7 @@
             <div class="bg-white rounded-lg shadow-lg p-6 w-80">
                 <h2 class="text-lg font-semibold mb-4">Select a User</h2>
                 <ul class="max-h-60 overflow-y-auto">
-                    <li v-for="user in users" :key="user.id" @click="selectRole(user)"
+                    <li v-for="user in userStore.users" :key="user.id" @click="selectRole(user)"
                         class="py-2.5 px-5 flex items-center hover:bg-gray-100 text-[#333] text-sm cursor-pointer">
                         {{ user.name }}
                     </li>
@@ -61,21 +61,20 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
 import { showToast } from '@/composables/toast';
+import { useUserStore } from '@/stores/userStore';
+import { useMessageStore } from '@/stores/messageStore';
+
+const userStore = useUserStore();
+const messageStore = useMessageStore();
 
 const isModalOpen = ref(false);
-const selectedRole = ref({ name: "Select a User", role: null });
-const users = ref([]);
-const messages = ref([]);
 const message = ref('');
 const messagesContainer = ref(null);
 
 onMounted(() => {
-    if (typeof window !== 'undefined') {
-        users.value = JSON.parse(localStorage.getItem('users')) || [];
-        messages.value = JSON.parse(localStorage.getItem('messages')) || [];
-        
-        nextTick(() => scrollToBottom());
-    }
+    userStore.loadUsersFromLocalStorage();
+    messageStore.loadMessagesFromLocalStorage();
+    nextTick(() => scrollToBottom());
 });
 
 const openModal = () => {
@@ -87,17 +86,17 @@ const closeModal = () => {
 };
 
 const selectRole = (user) => {
-    selectedRole.value = user;
+    userStore.selectRole(user);
     closeModal();
 };
 
 const handleSubmit = () => {
-    if (!selectedRole.value.role && message.value.trim() === '') {
+    if (!userStore.selectedRole.role && message.value.trim() === '') {
         showToast('error', 'Select a Role and Type a Message');
         return;
     }
 
-    if (!selectedRole.value.role) {
+    if (!userStore.selectedRole.role) {
         showToast('error', 'Please select a role');
         return;
     }
@@ -109,15 +108,11 @@ const handleSubmit = () => {
 
     const newMessage = {
         id: Date.now(),
-        user: selectedRole.value,
+        user: userStore.selectedRole,
         text: message.value,
     };
 
-    messages.value.push(newMessage);
-    if (typeof window !== 'undefined') {
-        localStorage.setItem('messages', JSON.stringify(messages.value));
-    }
-
+    messageStore.addMessage(newMessage); // Add message to the message store
     message.value = '';
     
     nextTick(() => scrollToBottom());
