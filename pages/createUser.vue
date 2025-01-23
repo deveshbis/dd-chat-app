@@ -101,7 +101,7 @@ const addUser = () => {
   showToast('success', 'User Added');
 
   username.value = '';
-  role.value = '';
+  role.value = 'user';
 };
 
 // Remove a user

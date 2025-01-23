@@ -13,35 +13,28 @@
 
                     <div class="flex flex-col w-full max-w-[320px] leading-1.5">
                         <div class="flex items-center space-x-2 rtl:space-x-reverse">
-                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ message.user.name
-                                }}</span>
-                            <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ new
-                                Date(message.id).toLocaleTimeString() }}</span>
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ message.user.name }}</span>
+                            <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ new Date(message.id).toLocaleTimeString() }}</span>
                         </div>
                         <p v-if="message.text" class="text-sm font-normal py-2 text-gray-900 dark:text-white">
                             {{ message.text }}
                         </p>
-                        <img v-if="message.image" :src="message.image" alt="Uploaded Image"
-                            class="max-w-full max-h-[200px] rounded-lg" />
+                        <img v-if="message.image" :src="message.image" alt="Uploaded Image" class="max-w-full max-h-[200px] rounded-lg" />
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Input Form -->
-        <form @submit.prevent="handleSubmit"
-            class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
-
-            <button type="button" @click="openModal"
-                class="px-4 py-2 flex items-center rounded-full text-[#333] text-sm border border-gray-300 outline-none hover:bg-gray-100">
-                <img src="https://readymadeui.com/profile_6.webp" class="w-7 h-7 mr-3 rounded-full shrink-0"
-                    alt="Profile" />
+        <form @submit.prevent="handleSubmit" class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
+            <button type="button" @click="openModal" class="px-4 py-2 flex items-center rounded-full text-[#333] text-sm border border-gray-300 outline-none hover:bg-gray-100">
+                <img src="https://readymadeui.com/profile_6.webp" class="w-7 h-7 mr-3 rounded-full shrink-0" alt="Profile" />
                 {{ userStore.selectedRole.name }}
             </button>
 
             <!-- Upload Image Component -->
             <div class="flex items-center space-x-3">
-                <input type="file" @change="handleFileUpload" accept="image/*" class="hidden " ref="imageInput" />
+                <input type="file" @change="handleFileUpload" accept="image/*" class="hidden" ref="imageInput" />
                 <button type="button" @click="triggerImageUpload"
                     class="px-4 py-2 flex items-center gap-2 rounded-lg bg-blue-500 text-white text-sm shadow-md hover:bg-blue-600">
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -102,7 +95,10 @@ const messageStore = useMessageStore();
 
 const isModalOpen = ref(false);
 const message = ref('');
+const uploadedImageName = ref('');
 const messagesContainer = ref(null);
+
+const userColors = new Map();
 
 onMounted(() => {
     userStore.loadUsersFromLocalStorage();
@@ -149,6 +145,7 @@ const handleSubmit = () => {
     messageStore.addMessage(newMessage);
     message.value = '';
     messageStore.tempImage = null;
+    uploadedImageName.value = ''; 
     nextTick(() => scrollToBottom());
 };
 
@@ -178,7 +175,17 @@ const scrollToBottom = () => {
     }
 };
 
-const userColors = ref(new Map());
+const getUserColor = (userId) => {
+    const storedColor = localStorage.getItem(`userColor-${userId}`);
+    if (storedColor) {
+        return storedColor;
+    }
+
+    const newColor = generateRandomColor();
+    userColors.set(userId, newColor); 
+    localStorage.setItem(`userColor-${userId}`, newColor);
+    return newColor;
+};
 
 const generateRandomColor = () => {
     const letters = '0123456789ABCDEF';
@@ -188,14 +195,6 @@ const generateRandomColor = () => {
     }
     return color;
 };
-
-const getUserColor = (userId) => {
-    if (!userColors.value.has(userId)) {
-        userColors.value.set(userId, generateRandomColor());
-    }
-    return userColors.value.get(userId);
-};
-
 </script>
 
 <style scoped></style>
