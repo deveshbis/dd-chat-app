@@ -1,17 +1,4 @@
 <template>
-
-    <div>
-        <h1 class="text-2xl font-bold">Tis is About Page</h1>
-        
-    </div>
-</template>
-
-<script setup>
-
-</script>
-
-<style lang="scss" scoped></style>
-
     <section class="bg-gray-100 py-16">
       <div class="container mx-auto px-4">
         <h2 class="text-3xl font-bold text-center text-gray-800">About Our Project</h2>
@@ -35,4 +22,3 @@
   
   <style scoped>
   </style>
-
