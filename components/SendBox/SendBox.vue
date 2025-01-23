@@ -6,10 +6,11 @@
                 :class="message.user.role === 'admin' ? 'justify-end' : 'justify-start'"
                 class="flex items-start gap-2.5 mb-2 border border-s-violet-300 p-3 rounded-2xl border-gray-200">
                 <div class="flex gap-4">
-                    <div
-                        class="w-12 h-9 rounded-full bg-gray-500 flex items-center justify-center text-white font-semibold">
+                    <div :style="{ backgroundColor: getUserColor(message.user.id) }"
+                        class="w-12 h-9 rounded-full flex items-center justify-center text-white font-semibold">
                         {{ message.user.name.split('').slice(0, 2).join('').toUpperCase() }}
                     </div>
+
                     <div class="flex flex-col w-full max-w-[320px] leading-1.5">
                         <div class="flex items-center space-x-2 rtl:space-x-reverse">
                             <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ message.user.name
@@ -39,7 +40,7 @@
 
             <!-- Upload Image Component -->
             <div class="flex items-center space-x-3">
-                <input type="file" @change="handleFileUpload" accept="image/*" class="hidden" ref="imageInput" />
+                <input type="file" @change="handleFileUpload" accept="image/*" class="hidden " ref="imageInput" />
                 <button type="button" @click="triggerImageUpload"
                     class="px-4 py-2 flex items-center gap-2 rounded-lg bg-blue-500 text-white text-sm shadow-md hover:bg-blue-600">
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -90,6 +91,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { ref, onMounted, nextTick } from 'vue';
 import { showToast } from '@/composables/toast';
 import { useUserStore } from '@/stores/userStore';
@@ -174,6 +176,25 @@ const scrollToBottom = () => {
     if (messagesContainer.value) {
         messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
     }
+};
+
+
+const userColors = ref(new Map());
+
+const generateRandomColor = () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+};
+
+const getUserColor = (userId) => {
+    if (!userColors.value.has(userId)) {
+        userColors.value.set(userId, generateRandomColor());
+    }
+    return userColors.value.get(userId);
 };
 </script>
 
