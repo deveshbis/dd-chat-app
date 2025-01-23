@@ -28,7 +28,6 @@
             </div>
         </div>
 
-
         <!-- Input Form -->
         <form @submit.prevent="handleSubmit"
             class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
@@ -179,7 +178,6 @@ const scrollToBottom = () => {
     }
 };
 
-
 const userColors = ref(new Map());
 
 const generateRandomColor = () => {
@@ -197,6 +195,7 @@ const getUserColor = (userId) => {
     }
     return userColors.value.get(userId);
 };
+
 </script>
 
 <style scoped></style>
