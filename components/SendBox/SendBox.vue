@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <form @submit.prevent="handleSubmit" class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
+        <form class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
             <button type="button" @click="openModal"
                 class="px-4 py-2 flex items-center rounded-full text-[#333] text-sm border border-gray-300 outline-none hover:bg-gray-100">
                 <img src="https://readymadeui.com/profile_6.webp" class="w-7 h-7 mr-3 rounded-full shrink-0" alt="Profile" />
@@ -112,7 +112,7 @@ const handleSubmit = () => {
         text: message.value,
     };
 
-    messageStore.addMessage(newMessage); // Add message to the message store
+    messageStore.addMessage(newMessage);
     message.value = '';
     
     nextTick(() => scrollToBottom());
