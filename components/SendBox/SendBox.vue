@@ -27,13 +27,9 @@
             </div>
         </div>
 
-
         <!-- Input Form -->
         <form @submit.prevent="handleSubmit"
             class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
-
-        <form class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
-
             <button type="button" @click="openModal"
                 class="px-4 py-2 flex items-center rounded-full text-[#333] text-sm border border-gray-300 outline-none hover:bg-gray-100">
                 <img src="https://readymadeui.com/profile_6.webp" class="w-7 h-7 mr-3 rounded-full shrink-0"
@@ -43,7 +39,7 @@
 
             <!-- Upload Image Component -->
             <div class="flex items-center space-x-3">
-                <input type="file" @change="handleFileUpload" accept="image/*" class="hidden" ref="imageInput" />
+                <input type="file" @change="handleFileUpload" accept="image/*" class="hidden " ref="imageInput" />
                 <button type="button" @click="triggerImageUpload"
                     class="px-4 py-2 flex items-center gap-2 rounded-lg bg-blue-500 text-white text-sm shadow-md hover:bg-blue-600">
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -179,6 +175,7 @@ const scrollToBottom = () => {
         messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
     }
 };
+
 </script>
 
 <style scoped></style>
