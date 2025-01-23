@@ -17,8 +17,9 @@
                             <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ new
                                 Date(message.id).toLocaleTimeString() }}</span>
                         </div>
-                        <p v-if="message.text" class="text-sm font-normal py-2 text-gray-900 dark:text-white">{{
-                            message.text }}</p>
+                        <p v-if="message.text" class="text-sm font-normal py-2 text-gray-900 dark:text-white">
+                            {{ message.text }}
+                        </p>
                         <img v-if="message.image" :src="message.image" alt="Uploaded Image"
                             class="max-w-full max-h-[200px] rounded-lg" />
                     </div>
@@ -37,7 +38,21 @@
             </button>
 
             <!-- Upload Image Component -->
-            <UploadImage @file-uploaded="sendImage" />
+            <div class="flex items-center space-x-3">
+                <input type="file" @change="handleFileUpload" accept="image/*" class="hidden" ref="imageInput" />
+                <button type="button" @click="triggerImageUpload"
+                    class="px-4 py-2 flex items-center gap-2 rounded-lg bg-blue-500 text-white text-sm shadow-md hover:bg-blue-600">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Upload Image
+                </button>
+                <span v-if="uploadedImageName" class="text-sm text-gray-700 font-medium truncate max-w-[200px]"
+                    title="Uploaded File">
+                    {{ uploadedImageName }}
+                </span>
+            </div>
 
             <!-- Message Input -->
             <textarea id="chat" rows="2" v-model="message" @keydown.enter.prevent="handleSubmit"
@@ -107,8 +122,8 @@ const selectRole = (user) => {
 };
 
 const handleSubmit = () => {
-    if (!userStore.selectedRole.role && message.value.trim() === '') {
-        showToast('error', 'Select a Role and Type a Message');
+    if (!userStore.selectedRole.role && message.value.trim() === '' && !messageStore.tempImage) {
+        showToast('error', 'Select a Role and Type a Message or Upload an Image');
         return;
     }
 
@@ -117,37 +132,42 @@ const handleSubmit = () => {
         return;
     }
 
-    if (message.value.trim() === '') {
-        showToast('error', `Message can't be empty`);
+    if (message.value.trim() === '' && !messageStore.tempImage) {
+        showToast('error', `Message or image can't be empty`);
         return;
     }
 
     const newMessage = {
         id: Date.now(),
         user: userStore.selectedRole,
-        text: message.value,
+        text: message.value.trim(),
+        image: messageStore.tempImage || null,
     };
 
     messageStore.addMessage(newMessage);
     message.value = '';
+    messageStore.tempImage = null;
     nextTick(() => scrollToBottom());
 };
 
-const sendImage = (image) => {
-    if (!userStore.selectedRole.role) {
-        showToast('error', 'Please select a role before sending an image');
-        return;
+const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            messageStore.tempImage = reader.result;
+            showToast('success', 'Image uploaded! Now press Send to send it.');
+        };
+        reader.readAsDataURL(file);
     }
+};
 
-    const newMessage = {
-        id: Date.now(),
-        user: userStore.selectedRole,
-        text: '',
-        image, 
-    };
-
-    messageStore.addMessage(newMessage);
-    nextTick(() => scrollToBottom());
+const triggerImageUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.addEventListener('change', handleImageUpload);
+    input.click();
 };
 
 const scrollToBottom = () => {
@@ -158,20 +178,3 @@ const scrollToBottom = () => {
 </script>
 
 <style scoped></style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
