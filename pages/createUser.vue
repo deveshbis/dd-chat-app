@@ -58,7 +58,7 @@ import { ref, onMounted } from 'vue';
 import { showToast } from '@/composables/toast';
 
 const username = ref('');
-const role = ref('');
+const role = ref('user'); //by default selected user
 const users = ref([]);
 
 // Show users from local storage

@@ -1,14 +1,16 @@
 <template>
-    <div class="p-4">
-        <div class="max-h-[500px] overflow-y-auto mb-4">
-            <div v-for="message in messages" :key="message.id"
+    <div class="flex flex-col h-full">
+        <!-- Messages Container -->
+        <div ref="messagesContainer" class="flex-grow max-h-[500px] overflow-y-auto mb-4">
+            <div v-for="message in messageStore.messages" :key="message.id"
                 :class="message.user.role === 'admin' ? 'justify-end' : 'justify-start'"
-                class="flex items-start gap-2.5 mb-2 border border-s-violet-300 p-3 rounded-2xl border-gray-200 ">
+                class="flex items-start gap-2.5 mb-2 border border-s-violet-300 p-3 rounded-2xl border-gray-200">
                 <div class="flex gap-4">
-                    <div
-                        class="w-12 h-9 rounded-full bg-gray-500 flex items-center justify-center text-white font-semibold">
+                    <div :style="{ backgroundColor: getUserColor(message.user.id) }"
+                        class="w-12 h-9 rounded-full flex items-center justify-center text-white font-semibold">
                         {{ message.user.name.split('').slice(0, 2).join('').toUpperCase() }}
                     </div>
+
                     <div class="flex flex-col w-full max-w-[320px] leading-1.5">
                         <div class="flex items-center space-x-2 rtl:space-x-reverse">
                             <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ message.user.name
@@ -16,117 +18,184 @@
                             <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ new
                                 Date(message.id).toLocaleTimeString() }}</span>
                         </div>
-                        <p class="text-sm font-normal py-2 text-gray-900 dark:text-white">{{ message.text }}</p>
+                        <p v-if="message.text" class="text-sm font-normal py-2 text-gray-900 dark:text-white">
+                            {{ message.text }}
+                        </p>
+                        <img v-if="message.image" :src="message.image" alt="Uploaded Image"
+                            class="max-w-full max-h-[200px] rounded-lg" />
                     </div>
                 </div>
             </div>
         </div>
 
-        <form @submit.prevent="handleSubmit">
-            <label for="chat" class="sr-only">Your message</label>
-            <div class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
-                <div class="relative flex-grow">
-                    <button type="button" @click="toggleDropdown"
-                        class="px-4 py-2 flex items-center rounded-full text-[#333] text-sm border border-gray-300 outline-none hover:bg-gray-100">
-                        <img src="https://readymadeui.com/profile_6.webp" class="w-7 h-7 mr-3 rounded-full shrink-0"
-                            alt="Profile" />
-                        {{ selectedRole.name }}
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 fill-gray-400 inline ml-3"
-                            viewBox="0 0 24 24">
-                            <path fill-rule="evenodd"
-                                d="M11.99997 18.1669a2.38 2.38 0 0 1-1.68266-.69733l-9.52-9.52a2.38 2.38 0 1 1 3.36532-3.36532l7.83734 7.83734 7.83734-7.83734a2.38 2.38 0 1 1 3.36532 3.36532l-9.52 9.52a2.38 2.38 0 0 1-1.68266.69734z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </button>
+        <!-- Input Form -->
+        <form @submit.prevent="handleSubmit"
+            class="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
 
-                    <ul v-if="isDropdownVisible"
-                        class="absolute shadow-lg bg-white py-2 z-[1000] min-w-full w-max rounded-lg max-h-96 overflow-auto">
-                        <li v-for="user in users" :key="user.id" @click="selectRole(user)"
-                            class="py-2.5 px-5 flex items-center hover:bg-gray-100 text-[#333] text-sm cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-4 h-4 mr-3"
-                                viewBox="0 0 512 512">
-                                <path
-                                    d="M337.711 241.3a16 16 0 0 0-11.461 3.988c-18.739 16.561-43.688 25.682-70.25 25.682s-51.511-9.121-70.25-25.683a16.007 16.007 0 0 0-11.461-3.988c-78.926 4.274-140.752 63.672-140.752 135.224v107.152C33.537 499.293 46.9 512 63.332 512h385.336c16.429 0 29.8-12.707 29.8-28.325V376.523c-.005-71.552-61.831-130.95-140.757-135.223zM446.463 480H65.537V376.523c0-52.739 45.359-96.888 104.351-102.8C193.75 292.63 224.055 302.97 256 302.97s62.25-10.34 86.112-29.245c58.992 5.91 104.351 50.059 104.351 102.8zM256 234.375a117.188 117.188 0 1 0-117.188-117.187A117.32 117.32 0 0 0 256 234.375zM256 32a85.188 85.188 0 1 1-85.188 85.188A85.284 85.284 0 0 1 256 32z" />
-                            </svg>
-                            {{ user.name }}
-                        </li>
-                    </ul>
-                </div>
+            <button type="button" @click="openModal"
+                class="px-4 py-2 flex items-center rounded-full text-[#333] text-sm border border-gray-300 outline-none hover:bg-gray-100">
+                <img src="https://readymadeui.com/profile_6.webp" class="w-7 h-7 mr-3 rounded-full shrink-0"
+                    alt="Profile" />
+                {{ userStore.selectedRole.name }}
+            </button>
 
-                <textarea id="chat" rows="1" v-model="message"
-                    class="flex-grow block p-2.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Your message..."></textarea>
-
-                <button type="submit"
-                    class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
-                    <svg class="w-5 h-5 rotate-90 rtl:-rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor" viewBox="0 0 18 20">
-                        <path
-                            d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
+            <!-- Upload Image Component -->
+            <div class="flex items-center space-x-3">
+                <input type="file" @change="handleFileUpload" accept="image/*" class="hidden " ref="imageInput" />
+                <button type="button" @click="triggerImageUpload"
+                    class="px-4 py-2 flex items-center gap-2 rounded-lg bg-blue-500 text-white text-sm shadow-md hover:bg-blue-600">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    <span class="sr-only">Send message</span>
+                    Upload Image
                 </button>
+                <span v-if="uploadedImageName" class="text-sm text-gray-700 font-medium truncate max-w-[200px]"
+                    title="Uploaded File">
+                    {{ uploadedImageName }}
+                </span>
             </div>
+
+            <!-- Message Input -->
+            <textarea id="chat" rows="2" v-model="message" @keydown.enter.prevent="handleSubmit"
+                class="flex-grow block p-2.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Your message..."></textarea>
+
+            <!-- Send Button -->
+            <button type="submit"
+                class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                <svg class="w-5 h-5 rotate-90 rtl:-rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor" viewBox="0 0 18 20">
+                    <path
+                        d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
+                </svg>
+                <span class="sr-only">Send message</span>
+            </button>
         </form>
+
+        <!-- User Selection Modal -->
+        <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-80">
+                <h2 class="text-lg font-semibold mb-4">Select a User</h2>
+                <ul class="max-h-60 overflow-y-auto">
+                    <li v-for="user in userStore.users" :key="user.id" @click="selectRole(user)"
+                        class="py-2.5 px-5 flex items-center hover:bg-gray-100 text-[#333] text-sm cursor-pointer">
+                        {{ user.name }}
+                    </li>
+                </ul>
+                <div class="flex justify-center mt-4">
+                    <button @click="closeModal" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { showToast } from '@/composables/toast';
+import { useUserStore } from '@/stores/userStore';
+import { useMessageStore } from '@/stores/messageStore';
 
-const isDropdownVisible = ref(false);
-const selectedRole = ref({ name: "Select a User", role: null });
-const users = ref([]);
-const messages = ref([]);
+const userStore = useUserStore();
+const messageStore = useMessageStore();
+
+const isModalOpen = ref(false);
 const message = ref('');
+const messagesContainer = ref(null);
 
 onMounted(() => {
-    if (typeof window !== 'undefined') {
-        users.value = JSON.parse(localStorage.getItem('users')) || [];
-        messages.value = JSON.parse(localStorage.getItem('messages')) || [];
-    }
+    userStore.loadUsersFromLocalStorage();
+    messageStore.loadMessagesFromLocalStorage();
+    nextTick(() => scrollToBottom());
 });
 
-const toggleDropdown = () => {
-    isDropdownVisible.value = !isDropdownVisible.value;
+const openModal = () => {
+    isModalOpen.value = true;
+};
+
+const closeModal = () => {
+    isModalOpen.value = false;
 };
 
 const selectRole = (user) => {
-    selectedRole.value = user;
-    isDropdownVisible.value = false;
+    userStore.selectRole(user);
+    closeModal();
 };
 
 const handleSubmit = () => {
-
-    if (!selectedRole.value.role && message.value.trim() === '') {
-        showToast('error', 'Select a Role and Type a Message');
+    if (!userStore.selectedRole.role && message.value.trim() === '' && !messageStore.tempImage) {
+        showToast('error', 'Select a Role and Type a Message or Upload an Image');
         return;
     }
 
-    if (!selectedRole.value.role) {
+    if (!userStore.selectedRole.role) {
         showToast('error', 'Please select a role');
         return;
     }
 
-    if (message.value.trim() === '') {
-        showToast('error', `Message can't be empty`);
+    if (message.value.trim() === '' && !messageStore.tempImage) {
+        showToast('error', `Message or image can't be empty`);
         return;
     }
 
     const newMessage = {
         id: Date.now(),
-        user: selectedRole.value,
-        text: message.value,
+        user: userStore.selectedRole,
+        text: message.value.trim(),
+        image: messageStore.tempImage || null,
     };
 
-    messages.value.push(newMessage);
-    if (typeof window !== 'undefined') {
-        localStorage.setItem('messages', JSON.stringify(messages.value));
-    }
-
+    messageStore.addMessage(newMessage);
     message.value = '';
+    messageStore.tempImage = null;
+    nextTick(() => scrollToBottom());
 };
+
+const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            messageStore.tempImage = reader.result;
+            showToast('success', 'Image uploaded! Now press Send to send it.');
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+const triggerImageUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.addEventListener('change', handleImageUpload);
+    input.click();
+};
+
+const scrollToBottom = () => {
+    if (messagesContainer.value) {
+        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+    }
+};
+
+const userColors = ref(new Map());
+
+const generateRandomColor = () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+};
+
+const getUserColor = (userId) => {
+    if (!userColors.value.has(userId)) {
+        userColors.value.set(userId, generateRandomColor());
+    }
+    return userColors.value.get(userId);
+};
+
 </script>
 
 <style scoped></style>
