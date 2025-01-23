@@ -1,30 +1,41 @@
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-export const useUserStore = defineStore('user', {
-  state: () => ({
-    users: [],
-    selectedRole: { name: "Select a User", role: null },
-  }),
-  actions: {
-    setUsers(users) {
-      this.users = users;
-      if (import.meta.client) { 
-        localStorage.setItem('users', JSON.stringify(users));
+export const useUserStore = defineStore('user', () => {
+
+  const users = ref([]);
+  const selectedRole = ref({ name: "Select a User", role: null });
+
+  const setUsers = (userList) => {
+    users.value = userList;
+    if (import.meta.client) {
+      localStorage.setItem('users', JSON.stringify(userList));
+    }
+  };
+
+  const selectRole = (user) => {
+    selectedRole.value = user;
+  };
+
+  const clearRole = () => {
+    selectedRole.value = { name: "Select a User", role: null };
+  };
+
+  const loadUsersFromLocalStorage = () => {
+    if (import.meta.client) {
+      const storedUsers = JSON.parse(localStorage.getItem('users'));
+      if (storedUsers) {
+        users.value = storedUsers;
       }
-    },
-    selectRole(user) {
-      this.selectedRole = user;
-    },
-    clearRole() {
-      this.selectedRole = { name: "Select a User", role: null };
-    },
-    loadUsersFromLocalStorage() {
-      if (import.meta.client) { 
-        const storedUsers = JSON.parse(localStorage.getItem('users'));
-        if (storedUsers) {
-          this.users = storedUsers;
-        }
-      }
-    },
-  },
+    }
+  };
+
+  return {
+    users,
+    selectedRole,
+    setUsers,
+    selectRole,
+    clearRole,
+    loadUsersFromLocalStorage,
+  };
 });
